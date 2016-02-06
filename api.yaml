@@ -1,0 +1,124 @@
+swagger: '2.0'
+
+info:
+  version: "1.0.0"
+  title: Lang71
+
+schemes:
+  - http
+host: lang71.com
+basePath: /api/v1
+consumes:
+   - application/json
+produces:
+  - application/json
+
+################################################################################
+#                                  Security                                    #
+################################################################################
+#securityDefinitions:
+#  oauth:
+#    type: oauth2
+#    flow: implicit
+#    authorizationUrl: http://lang71.com/oauth/authorize/?client_id=CLIENT-ID&redirect_uri=REDIRECT-URI&response_type=token
+#    scopes:
+#      basic: |
+#       to read any and all data related to twitter
+#security:
+#  - oauth:
+#    - basic
+
+
+################################################################################
+#                                           Paths                              #
+################################################################################
+paths:
+  /sessions/create:
+    post:
+      description: |
+        Create user session.
+      parameters:
+        - name: username
+          in: query
+          description: login of the user
+          required: true
+          type: string
+        - name: password
+          in: query
+          description: password of the user
+          required: true
+          type: string
+      responses:
+          "200":
+            description: Success
+            schema:
+              $ref: '#/definitions/User'
+          "401":
+            description: Error
+
+  /register:
+    put:
+      description: |
+        Create user profile.
+      parameters:
+        - name: username
+          in: query
+          description: login of the user
+          required: true
+          type: string
+        - name: password
+          in: query
+          description: password of the user
+          required: true
+          type: string
+      responses:
+          "200":
+            description: Success
+            schema:
+              $ref: '#/definitions/User'
+
+  /words:
+    get:
+      description: |
+        Gets all word objects.
+#      security:
+#         - oauth:
+#           - basic
+      parameters:
+        -
+          name: size
+          in: query
+          description: Size of array
+          required: true
+          type: number
+          format: double
+      responses:
+        200:
+          description: OK
+          schema:
+            title: ArrayOfWords
+            type: array
+            items:
+              $ref: '#/definitions/Word'
+
+
+################################################################################
+#                                 Definitions                                  #
+################################################################################
+definitions:
+  User:
+    type: object
+    properties:
+      id:
+        type: integer
+      username:
+        type: string
+  Word:
+    type: object
+    properties:
+      id:
+        type: integer
+      def:
+        type: string
+      translation:
+        type: string
