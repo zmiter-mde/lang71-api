@@ -33,92 +33,185 @@ produces:
 #                                           Paths                              #
 ################################################################################
 paths:
-  /sessions/create:
+  /login:
     post:
       description: |
         Create user session.
       parameters:
-        - name: username
-          in: query
-          description: login of the user
+        - name: body
+          in: body
           required: true
-          type: string
-        - name: password
-          in: query
-          description: password of the user
-          required: true
-          type: string
+          schema:
+            $ref: '#/definitions/Credentials'
       responses:
           "200":
-            description: Success
+            description: OK
             schema:
-              $ref: '#/definitions/User'
+              $ref: '#/definitions/Token'
           "401":
             description: Error
+            schema:
+              $ref: '#/definitions/Error'
 
   /register:
     put:
       description: |
         Create user profile.
       parameters:
-        - name: username
-          in: query
-          description: login of the user
+        - name: body
+          in: body
           required: true
-          type: string
-        - name: password
-          in: query
-          description: password of the user
-          required: true
-          type: string
+          schema:
+            $ref: '#/definitions/Credentials'
       responses:
           "200":
-            description: Success
+            description: OK
             schema:
-              $ref: '#/definitions/User'
+              $ref: '#/definitions/Token'
+          "400":
+            description: Error
+            schema:
+              $ref: '#/definitions/Error'
 
-  /words:
-    get:
+
+  /words/new:
+    put:
       description: |
-        Gets all word objects.
+        Put new word to the server.
 #      security:
 #         - oauth:
 #           - basic
       parameters:
-        -
-          name: size
-          in: query
-          description: Size of array
+        - name: body
+          in: body
           required: true
-          type: number
-          format: double
+          schema:
+            $ref: '#/definitions/Word'
       responses:
-        200:
+        "200":
           description: OK
           schema:
-            title: ArrayOfWords
-            type: array
-            items:
-              $ref: '#/definitions/Word'
+            $ref: '#/definitions/Word'
+        "400":
+          description: Error
+          schema:
+            $ref: '#/definitions/Error'
+
+  /words/{id}:
+    delete:
+      description: |
+        Delete word.
+      parameters:
+        - name: id
+          in: path
+          type: integer
+          required: true
+      responses:
+          "200":
+            description: OK
+            schema:
+             $ref: '#/definitions/Word'
+          "400":
+            description: Error
+            schema:
+              $ref: '#/definitions/Error'
+    post:
+      description: |
+        Save statistic.
+      parameters:
+        - name: id
+          in: path
+          type: integer
+          required: true
+        - name: answer
+          in: body
+          schema:
+            type: boolean
+            title: answer
+          required: true
+      responses:
+          "200":
+            description: OK
+          "400":
+            description: Error
+            schema:
+              $ref: '#/definitions/Error'
+
+  /words/all:
+    get:
+      description: |
+        Get all user words.
+      responses:
+          "200":
+            description: OK
+            schema:
+              title: ArrayOfWords
+              type: array
+              items:
+                $ref: '#/definitions/Word'
+
+          "400":
+            description: Error
+            schema:
+              $ref: '#/definitions/Error'
+
+  /words/random:
+    get:
+      description: |
+        Get array of random words.
+      parameters:
+        - name: count
+          in: body
+          schema:
+            type: integer
+            title: count
+          required: true
+      responses:
+          "200":
+            description: OK
+            schema:
+              title: ArrayOfWords
+              type: array
+              items:
+                $ref: '#/definitions/Word'
+
+          "400":
+            description: Error
+            schema:
+              $ref: '#/definitions/Error'
+#            title: ArrayOfWords
+#            type: array
+#            items:
+#              $ref: '#/definitions/Word'
 
 
 ################################################################################
 #                                 Definitions                                  #
 ################################################################################
 definitions:
-  User:
+  Error:
     type: object
     properties:
-      id:
-        type: integer
-      username:
+      message:
+        type: string
+  Credentials:
+    type: object
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+  Token:
+    type: object
+    properties:
+      token:
         type: string
   Word:
     type: object
     properties:
       id:
         type: integer
-      def:
+      word:
         type: string
-      translation:
+      meaning:
         type: string
